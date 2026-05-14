@@ -1,0 +1,13 @@
+{
+  "name": "NEON Visuals | Creative Direction & Design",
+  "description": "Premium portfolio of a Visual Content Creator & Graphic Designer specializing in cinematic videography, branding, and interactive digital experiences.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "3D Interaction",
+    "Cinematic Motion",
+    "Interactive Portfolio"
+  ]
+}
