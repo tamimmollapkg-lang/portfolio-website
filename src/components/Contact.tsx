@@ -29,13 +29,13 @@ export default function Contact() {
                   <p className="text-lg font-medium">hello@neonvisuals.com</p>
                 </div>
               </a>
-              <a href="#" className="flex items-center gap-4 group">
+              <a href="https://wa.me/8801319643710" className="flex items-center gap-4 group" target="_blank" rel="noopener noreferrer">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 text-neon-cyan transition-all group-hover:bg-neon-cyan group-hover:text-matte-black">
                   <MessageSquare className="h-5 w-5" />
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-widest text-white/40">WhatsApp</p>
-                  <p className="text-lg font-medium">+1 234 567 890</p>
+                  <p className="text-lg font-medium">+8801319643710</p>
                 </div>
               </a>
             </div>

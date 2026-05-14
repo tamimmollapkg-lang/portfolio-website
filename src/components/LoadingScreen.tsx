@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useEffect, useState, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, PerspectiveCamera, Sparkles, MeshDistortMaterial } from '@react-three/drei';
+import { Float, PerspectiveCamera, Sparkles, Environment, Preload } from '@react-three/drei';
 import * as THREE from 'three';
+import { Suspense } from 'react';
 
 const PHRASES = [
   "Crafting Visual Experiences",
@@ -24,6 +25,7 @@ function CinematicPortrait() {
 
   return (
     <group ref={meshRef}>
+      <Environment preset="city" />
       {/* Background Glow */}
       <mesh position={[0, 0, -2]}>
         <planeGeometry args={[10, 10]} />
@@ -70,25 +72,18 @@ export default function LoadingScreen({ onFinish }: { onFinish: () => void }) {
   const [phraseIndex, setPhraseIndex] = useState(0);
 
   useEffect(() => {
-    // Progress interval
+    // Progress interval - only runs once
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(timer);
-          setTimeout(() => setPhase(5), 1000); // Transition to home
-          setTimeout(onFinish, 2000);
           return 100;
         }
         return prev + 0.5;
       });
     }, 20);
 
-    // Phase management based on progress
-    if (progress > 5 && phase === 1) setPhase(2);
-    if (progress > 30 && phase === 2) setPhase(3);
-    if (progress > 50 && phase === 3) setPhase(4);
-
-    // Phrase rotation
+    // Phrase rotation - only runs once
     const phraseInterval = setInterval(() => {
       setPhraseIndex((prev) => (prev + 1) % PHRASES.length);
     }, 2500);
@@ -97,7 +92,24 @@ export default function LoadingScreen({ onFinish }: { onFinish: () => void }) {
       clearInterval(timer);
       clearInterval(phraseInterval);
     };
-  }, [progress, phase, onFinish]);
+  }, []);
+
+  // Effect to handle phases and completion based on progress
+  useEffect(() => {
+    if (progress > 5 && phase < 2) setPhase(2);
+    if (progress > 30 && phase < 3) setPhase(3);
+    if (progress > 50 && phase < 4) setPhase(4);
+    if (progress >= 100 && phase < 5) setPhase(5);
+  }, [progress, phase]);
+
+  useEffect(() => {
+    if (phase === 5) {
+      const timer = setTimeout(() => {
+        onFinish();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [phase, onFinish]);
 
   return (
     <motion.div
@@ -109,9 +121,12 @@ export default function LoadingScreen({ onFinish }: { onFinish: () => void }) {
       {/* 3D Background Scene */}
       <div className="absolute inset-0 z-0">
         <Canvas>
-          <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-          <ambientLight intensity={0.5} />
-          <CinematicPortrait />
+          <Suspense fallback={null}>
+            <PerspectiveCamera makeDefault position={[0, 0, 5]} />
+            <ambientLight intensity={0.5} />
+            <CinematicPortrait />
+            <Preload all />
+          </Suspense>
         </Canvas>
       </div>
 

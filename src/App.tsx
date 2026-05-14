@@ -22,6 +22,8 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (loading) return;
+
     // Initialize Lenis smooth scroll
     const lenis = new Lenis({
       duration: 1.2,

@@ -1,26 +1,26 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Text, Image, Environment, ScrollControls, Scroll, useScroll } from '@react-three/drei';
-import { useRef } from 'react';
+import { Float, Text, Image, Environment, Preload } from '@react-three/drei';
+import { useRef, Suspense } from 'react';
 import * as THREE from 'three';
 
 function GalleryItem({ url, position, index }: { url: string; position: [number, number, number], index: number }) {
-  const ref = useRef<THREE.Group>(null!);
-  
   return (
     <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
-      <group position={position} ref={ref}>
-        <Image 
-          url={url} 
-          scale={[3, 4, 1]} 
-          zoom={1}
-          transparent
-          opacity={0.8}
-        />
+      <group position={position}>
+        <Suspense fallback={<mesh scale={[3, 4, 1]}><planeGeometry /><meshStandardMaterial color="#111" /></mesh>}>
+          <Image 
+            url={url} 
+            scale={[3, 4, 1]} 
+            zoom={1}
+            transparent
+            opacity={0.8}
+            side={THREE.DoubleSide}
+          />
+        </Suspense>
         <Text
           position={[0, -2.5, 0.1]}
           fontSize={0.25}
           color="white"
-          font="https://fonts.gstatic.com/s/outfit/v11/Q_8V7nMpS86R8OghyWjT8Q.woff"
           anchorX="center"
           anchorY="middle"
         >
@@ -33,10 +33,10 @@ function GalleryItem({ url, position, index }: { url: string; position: [number,
 
 function GalleryScene() {
   const images = [
-    'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&q=80&w=800',
-    'https://images.unsplash.com/photo-1493246507139-91e8bef99c02?auto=format&fit=crop&q=80&w=800',
-    'https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&q=80&w=800',
-    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1614853316476-de00d14cb1fc?auto=format&fit=crop&q=80&w=800',
   ];
 
   return (
@@ -52,6 +52,7 @@ function GalleryScene() {
           position={[i * 5 - 7.5, 0, 0]} 
         />
       ))}
+      <Preload all />
     </>
   );
 }
@@ -66,7 +67,9 @@ export default function ThreeGallery() {
       
       <div className="h-full w-full">
         <Canvas camera={{ position: [0, 0, 10], fov: 35 }}>
-          <GalleryScene />
+          <Suspense fallback={null}>
+            <GalleryScene />
+          </Suspense>
         </Canvas>
       </div>
 

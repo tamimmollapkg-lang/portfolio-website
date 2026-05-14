@@ -1,6 +1,6 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { MeshDistortMaterial, Float, PerspectiveCamera, Environment, SpotLight, Text } from '@react-three/drei';
-import { useRef } from 'react';
+import { MeshDistortMaterial, Float, PerspectiveCamera, Environment, SpotLight, Preload } from '@react-three/drei';
+import { useRef, Suspense } from 'react';
 import * as THREE from 'three';
 
 function FloatingObject() {
@@ -62,18 +62,21 @@ export default function ThreeScene() {
   return (
     <div className="absolute inset-0 -z-10">
       <Canvas>
-        <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
-        <Environment preset="city" />
-        <ambientLight intensity={0.2} />
-        <SpotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-        
-        <FloatingObject />
-        <Particles count={200} />
-        
-        <mesh position={[0, -2, -5]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[100, 100]} />
-          <meshStandardMaterial color="#0D0D0D" metalness={0.8} roughness={0.2} />
-        </mesh>
+        <Suspense fallback={null}>
+          <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
+          <Environment preset="city" />
+          <ambientLight intensity={0.2} />
+          <SpotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+          
+          <FloatingObject />
+          <Particles count={200} />
+          
+          <mesh position={[0, -2, -5]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[100, 100]} />
+            <meshStandardMaterial color="#0D0D0D" metalness={0.8} roughness={0.2} />
+          </mesh>
+          <Preload all />
+        </Suspense>
       </Canvas>
     </div>
   );
